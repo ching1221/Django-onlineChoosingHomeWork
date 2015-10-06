@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python在线选题系统</title>
+</head>
+<body style="text-align:center">
+<form action="/collect/" method="post" style="margin-top:100px;">
+    <h3>Python在线选题系统</h3>
+    <div style="overflow:hidden">
+        <a href="/query/" style="float:right;margin-right:25%;">查询我的选题情况</a>
+    </div>
+    <br/>
+    <label>输入学生1的信息</label><br/>
+    <input name="stuid1" type="text" placeholder="输入学号" style="height:20px;width:150px"/>
+    <input name="stuname1" type="text" placeholder="输入姓名" style="height:20px;width:50px"/>
+    <br/>
+    <label>输入学生2的信息</label><br/>
+    <input name="stuid2" type="text" placeholder="输入学号" style="height:20px;width:150px"/>
+    <input name="stuname2" type="text" placeholder="输入姓名" style="height:20px;width:50px"/>
+    <br/>
+    <label>输入学生3的信息</label><br/>
+    <input name="stuid3" type="text" placeholder="输入学号" style="height:20px;width:150px"/>
+    <input name="stuname3" type="text" placeholder="输入姓名" style="height:20px;width:50px"/>
+    <br/>
+
+    <label>选择题目</label><br/>
+    <select style="width:220px;margin-top:4px;border: gray 1px;border-style:solid;display: inline-block" name="projectid" oninput="showdesc(this.value)">
+        {% for pro in Pros %}
+        <option value={{ pro.id }}>{{ pro.Name }}</option>
+        {% endfor %}
+        <option value=0>自拟题目</option>
+    </select>
+    <div id="self-project" style="display:none">
+        <label>输入自拟题目信息</label><br/>
+        <input type="text" name="pro-name" placeholder="输入题目，100字以内" style="width:120px;margin-top:4px;border: gray 1px;border-style:solid;display: inline-block"  /><br/>
+        <textarea rows="4" placeholder="输入题目描述，200字以内" name="pro-desc" style="width:220px;margin-top:4px;border: gray 1px;border-style:solid;display: inline-block" ></textarea>
+    </div>
+    <div style="overflow:hidden" id="desc-control">
+        <p id="desc" style="width:48%;margin-left:26%;border: gray 1px;border-style:solid;border-radius: 5px;">题目描述：<br/>{{ Desc1 }} <br/>
+     剩余可选队伍数目：{{ Remain1 }}
+    </p>
+    </div>
+    <div>
+            <input type="submit" value="提交" id="sub" style="margin-top:0" />
+    </div>
+</form>
+<a href="/admin/" style="font-size:11px;margin-top:60px;display:block;">管理员管理</a>
+<script type="text/javascript">
+    //获取xml对象
+    function GetXmlHttpObject()
+    {
+        var xmlHttp=null;
+        try
+        {
+            // Firefox, Opera 8.0+, Safari
+            xmlHttp=new XMLHttpRequest();
+        }
+        catch (e)
+        {
+            // Internet Explorer
+            try
+            {
+                xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+            }
+            catch (e)
+            {
+                xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+        }
+        return xmlHttp;
+    }
+    function showdesc(projectid){
+        if(projectid==0){
+            document.getElementById("desc-control").style.display = 'none';
+            document.getElementById("self-project").style.display = 'block';
+            document.getElementById("sub").style.marginTop = "10px";
+            return;
+        }
+        else{
+            document.getElementById("desc-control").style.display = 'block';
+            document.getElementById("self-project").style.display = 'none';
+            document.getElementById("sub").style.marginTop = "0";
+
+        }
+        var xmlHttp;
+        //获取xmlHttpObject对象，如果为空，提示浏览器不支持ajax
+        xmlHttp = GetXmlHttpObject();
+        if (xmlHttp == null) {
+            alert("Browser does not support HTTP Request");
+            return;
+        }
+        //获取url
+        var url = "/desc/";
+        url = url + '?' + 'proid=' + projectid;
+        xmlHttp.onreadystatechange = stateChanged;
+        xmlHttp.open("GET", url, true);
+        xmlHttp.send(null);
+        function stateChanged() {
+            res = xmlHttp.responseText;
+            res = res.split('###');
+            document.getElementById("desc").innerHTML = "题目描述：<br/>" + res[0] + "<br/> 剩余可选队伍数目："+res[1];
+        }
+    }
+</script>
+
+</body>
+</html>
