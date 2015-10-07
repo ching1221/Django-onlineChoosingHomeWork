@@ -12,3 +12,5 @@ then you can  view the webpage at localhost:8080, then you can add courses or pr
 $ python manage.py syncdb
 
 so you can input your admin name and password, then you run server and should first go localhost:8080/admin to add a project info, so it can work out.
+
+tips: this is best for chinese teachers who wanna collect the projects info choosen by her/his students online.
